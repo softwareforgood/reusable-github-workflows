@@ -9,15 +9,18 @@ on:
       git_repo:
         type: string
         required: true
+      environment:
+        type: string
+        default: staging
     secrets:
       ssh_key:
         required: true
       
 
-
 jobs:
   push_to_pantheon:
     runs-on: ubuntu-latest
+    environment: ${{inputs.environment}}
     steps:
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
@@ -26,14 +29,14 @@ jobs:
           name: id_rsa
           known_hosts: unnecessary
           config: |
-            Host ${{inputs.ssh_host}}
+            Host ${{ secrets.ssh_host }}
               StrictHostKeyChecking accept-new
           if_key_exists: fail
   
       - name: Add deploy location
         shell: bash
         run: |
-           git remote add deploy_location ${{ secrets.PANTHEON_REPO }}
+           git remote add deploy_location ${{ inputs.git_repo }}
 
       - name: Push to deploy location
         shell: bash
