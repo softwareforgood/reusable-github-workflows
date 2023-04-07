@@ -34,7 +34,7 @@ jobs:
           name: id_rsa
           known_hosts: unnecessary
           config: |
-            Host ${{ secrets.ssh_host }}
+            Host ${{ inputs.ssh_host }}
               StrictHostKeyChecking accept-new
           if_key_exists: fail
   
