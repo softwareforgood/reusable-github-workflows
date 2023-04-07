@@ -46,6 +46,7 @@ jobs:
       - name: Push to deploy location
         shell: bash
         run: |
+          git fetch deploy_location
           git push deploy_location master
 
 
