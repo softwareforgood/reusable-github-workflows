@@ -45,8 +45,18 @@ jobs:
         run: |
           git remote add deploy_location ${{ inputs.git_repo }}
 
-      - name: Push to deploy location
+      - name: Fetch current location
         shell: bash
         run: |
           git fetch deploy_location
+
+      - name: git status and commit
+        run: |
+          git status
+          git log -1
+
+      - name: git push
+        run: |
           git push deploy_location HEAD:master
+       
+        
