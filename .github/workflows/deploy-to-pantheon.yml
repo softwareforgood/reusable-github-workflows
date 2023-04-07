@@ -48,5 +48,7 @@ jobs:
       - name: Push to deploy location
         shell: bash
         run: |
-          git pull deploy_location master
-          git push deploy_location master:master
+          git fetch deploy_location  
+          git checkout master
+          git pull pantheon
+          git push deploy_location master
