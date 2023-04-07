@@ -50,5 +50,5 @@ jobs:
         run: |
           git fetch deploy_location  
           git checkout master
-          git pull deploy_location master
+          git pull deploy_location master --ff-only
           git push deploy_location master
