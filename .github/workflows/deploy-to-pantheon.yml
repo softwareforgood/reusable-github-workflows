@@ -50,5 +50,5 @@ jobs:
         run: |
           git fetch deploy_location  
           git checkout master
-          git pull pantheon
+          git pull deploy_location
           git push deploy_location master
