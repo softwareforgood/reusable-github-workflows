@@ -2,7 +2,7 @@ name: "Deploy to Pantheon"
 on:
   workflow_call:
     inputs:
-      ssh_host: 
+      ssh_host:
         type: string
         default: "*.drush.in"
       git_repo:
@@ -18,10 +18,10 @@ on:
 concurrency:
   group: ${{ inputs.environment }}
   cancel-in-progress: true
-      
 
 jobs:
   push_to_pantheon:
+    name: Push to Pantheon
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
     steps:
@@ -37,17 +37,14 @@ jobs:
             Host ${{ inputs.ssh_host }}
               StrictHostKeyChecking accept-new
           if_key_exists: fail
-  
+
       - name: Add deploy location
         shell: bash
         run: |
-           git remote add deploy_location ${{ inputs.git_repo }}
+          git remote add deploy_location ${{ inputs.git_repo }}
 
       - name: Push to deploy location
         shell: bash
         run: |
           git fetch deploy_location
           git push deploy_location master
-
-
-      
