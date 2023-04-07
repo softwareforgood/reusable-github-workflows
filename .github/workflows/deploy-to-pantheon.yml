@@ -57,6 +57,6 @@ jobs:
 
       - name: git push
         run: |
-          git push deploy_location HEAD:master
+          git push -u deploy_location HEAD:master
        
         
