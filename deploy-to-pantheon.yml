@@ -1,0 +1,44 @@
+name: "Deploy to Pantheon"
+on:
+  workflow_call:
+    inputs:
+      ssh_host: 
+        type: string
+        required: true
+        default: "*.drush.in"
+      git_repo:
+        type: string
+        required: true
+    secrets:
+      ssh_key:
+        required: true
+      
+
+
+jobs:
+  push_to_pantheon:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.ssh_key }}
+          name: id_rsa
+          known_hosts: unnecessary
+          config: |
+            Host ${{inputs.ssh_host}}
+              StrictHostKeyChecking accept-new
+          if_key_exists: fail
+  
+      - name: Add deploy location
+        shell: bash
+        run: |
+           git remote add deploy_location ${{ secrets.PANTHEON_REPO }}
+
+      - name: Push to deploy location
+        shell: bash
+        run: |
+          git push deploy_location master
+
+
+      
