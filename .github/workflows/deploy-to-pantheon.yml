@@ -26,7 +26,7 @@ jobs:
     environment: ${{inputs.environment}}
     steps:
       - name: Checkout
-        uses: actions/checkout
+        uses: actions/checkout@v3
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
         with:
