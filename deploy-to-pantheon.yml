@@ -15,6 +15,10 @@ on:
     secrets:
       ssh_key:
         required: true
+
+concurrency:
+  group: ${{ inputs.enviroment }}
+  cancel-in-progress: true
       
 
 jobs:
