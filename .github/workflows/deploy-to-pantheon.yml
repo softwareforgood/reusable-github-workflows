@@ -30,7 +30,7 @@ env:
   CI_BRANCH: ${{ github.ref }}
   COMMIT_SHA: ${{ github.sha }}
   CI_BUILD_NUMBER: ${{ github.run_number }}
-  DEFAULT_SITE: ${{ secrets.TERMINUS_SITE }}
+  DEFAULT_SITE: ${{ vars.TERMINUS_SITE }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   GITHUB_OWNER: ${{ github.repository_owner }}
   CI_PROJECT_NAME: ${{ github.repository }}
