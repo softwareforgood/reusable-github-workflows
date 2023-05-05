@@ -98,6 +98,9 @@ jobs:
         # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
         - name: setup-environment-vars
           run: /build-tools-ci/scripts/set-environment
+        
+        - name: Get dist
+          uses: actions/download-artifact@v2
 
         # Deploy to Pantheon
         - name: deploy to Pantheon
