@@ -2,51 +2,145 @@ name: "Deploy to Pantheon"
 on:
   workflow_call:
     inputs:
-      ssh_host: 
-        type: string
-        default: "*.drush.in"
-      git_repo:
+      TERMINUS_SITE:
         type: string
         required: true
-      environment:
-        type: string
-        default: staging
+        description: The name of the site as viewable by calling `terminus site:list`
     secrets:
-      ssh_key:
+      SSH_PRIVATE_KEY:
         required: true
+        description: An SSH private key, as saved at https://dashboard.pantheon.io/personal-settings/ssh-keys
+      TERMINUS_TOKEN:
+        required: true
+        description: A Pantheon machine token, as created at https://dashboard.pantheon.io/personal-settings/machine-tokens
+defaults:
+  run:
+    shell: bash
+env:
+  TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+  NOTIFY: 'scripts/github/add-commit-comment {project} {sha} "Created multidev environment [{site}#{env}]({dashboard-url})." {site-url}'
+  TERM: dumb
+  # ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+  # ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+  # ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+  GITHUB_TOKEN: ${{ github.token }}
+  TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+  TEST_SITE_NAME: ${{ vars.TERMINUS_SITE }}
+  BASH_ENV: "./bash_env.txt"
+  CI_BRANCH: ${{ github.ref }}
+  COMMIT_SHA: ${{ github.sha }}
+  CI_BUILD_NUMBER: ${{ github.run_number }}
+  DEFAULT_SITE: ${{ vars.TERMINUS_SITE }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  GITHUB_OWNER: ${{ github.repository_owner }}
+  CI_PROJECT_NAME: ${{ github.repository }}
 
 concurrency:
-  group: ${{ inputs.environment }}
+  group: $CI_BRANCH
   cancel-in-progress: true
-      
 
 jobs:
-  push_to_pantheon:
+  configure_env_vars:
+    name: Configure environment variables
+    container:
+      image: quay.io/pantheon-public/build-tools-ci:6.x
+      options: --user root
     runs-on: ubuntu-latest
-    environment: ${{inputs.environment}}
     steps:
       - name: Checkout
-        uses: actions/checkout
-      - name: Set up SSH key
-        uses: shimataro/ssh-key-action@v2
+        uses: actions/checkout@v3
+
+      - name: Cache bash_env.txt
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-bash-env
         with:
-          key: ${{ secrets.ssh_key }}
-          name: id_rsa
-          known_hosts: unnecessary
-          config: |
-            Host ${{ secrets.ssh_host }}
-              StrictHostKeyChecking accept-new
-          if_key_exists: fail
-  
-      - name: Add deploy location
-        shell: bash
+          path: bash_env.txt
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}
+
+      # Set TERMINUS_ENV and related environment variables.
+      # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
+      - name: setup-environment-vars
         run: |
-           git remote add deploy_location ${{ inputs.git_repo }}
+          export CI_BRANCH="master"
+          export CI_PROJECT_REPONAME=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github.groot-preview+json" \
+            "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
+            python3 -c "import sys, json; print(json.load(sys.stdin)[0]['base']['repo']['name'])"`
+          export CI_PROJECT_USERNAME=$GITHUB_REPOSITORY_OWNER
+          /build-tools-ci/scripts/set-environment
+          GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          echo "export CI_BUILD_URL='${GITHUB_WORKFLOW_URL}'" >> $BASH_ENV
+          echo "export CI_NODE_INDEX=0" >> $BASH_ENV
+          echo "export CI_REPOSITORY_URL='https://github.com/${GITHUB_REPOSITORY}'" >> $BASH_ENV
+          echo "export ARTIFACTS_DIR_URL='${GITHUB_WORKFLOW_URL}/#artifacts'" >> $BASH_ENV
+# important note: deploy_to_pantheon will push EVERYTHING in the repo directory other than the .git directory, i.e.
+# it will not respect .gitignore
+  deploy_to_pantheon:
+      name: "Deploy to Pantheon"
+      container:
+        image: quay.io/pantheon-public/build-tools-ci:6.x
+        options: --user root
+      runs-on: ubuntu-latest
+      needs: [configure_env_vars]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
 
-      - name: Push to deploy location
-        shell: bash
-        run: |
-          git push deploy_location master
+        - name: Cache bash_env.txt
+          uses: actions/cache@v3
+          env:
+            cache-name: cache-bash-env
+          with:
+            path: bash_env.txt
+            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}
+            restore-keys: |
+              ${{ runner.os }}-build-${{ env.cache-name }}-
+              ${{ runner.os }}-build-
+              ${{ runner.os }}-
+        # Set TERMINUS_ENV and related environment variables.
+        # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
+        - name: setup-environment-vars
+          run: /build-tools-ci/scripts/set-environment
+        
+        - name: Get dist
+          uses: actions/download-artifact@v3
+          with:
+            name: assets
 
+        # Deploy to Pantheon
+        - name: deploy to Pantheon
+          run: |
+            echo "$SSH_PRIVATE_KEY" > ../private.key
+            chmod 600 ../private.key
+            eval `ssh-agent -s`
+            ssh-add ../private.key
+            source $BASH_ENV
 
-      
+            terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
+
+            if [[ $CI_BRANCH != $DEFAULT_BRANCH ]]
+            then
+                # Create a new multidev environment (or push to an existing one)
+                terminus -n build:env:create "$TERMINUS_SITE.dev" "$TERMINUS_ENV" --yes
+            else
+                # Push to the dev environment
+                terminus -n build:env:push "$TERMINUS_SITE.dev" --yes
+            fi
+
+            # Run update-db to ensure that the cloned database is updated for the new code.
+            terminus -n wp $TERMINUS_SITE.$TERMINUS_ENV -- core update-db
+
+            # Clear the site environment's cache
+            terminus -n env:clear-cache "$TERMINUS_SITE.$TERMINUS_ENV"
+
+            # Ensure secrets are set
+            terminus -n secrets:set "$TERMINUS_SITE.$TERMINUS_ENV" token "$GITHUB_TOKEN" --file='github-secrets.json' --clear --skip-if-empty
+
+            # Delete old multidev environments associated
+            # with a PR that has been merged or closed.
+            terminus -n build:env:delete:pr $TERMINUS_SITE --yes
+       
+        
