@@ -107,6 +107,8 @@ jobs:
         
         - name: Get dist
           uses: actions/download-artifact@v3
+          with:
+            name: assets
 
         # Deploy to Pantheon
         - name: deploy to Pantheon
