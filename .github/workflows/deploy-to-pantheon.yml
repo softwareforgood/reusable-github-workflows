@@ -1,13 +1,18 @@
 name: "Deploy to Pantheon"
 on:
   workflow_call:
+    inputs:
+      TERMINUS_SITE:
+        type: string
+        required: true
+        description: The name of the site as viewable by calling `terminus site:list`
     secrets:
       SSH_PRIVATE_KEY:
         required: true
+        description: An SSH private key, as saved at https://dashboard.pantheon.io/personal-settings/ssh-keys
       TERMINUS_TOKEN:
         required: true
-      TERMINUS_SITE:
-        required: true
+        description: A Pantheon machine token, as created at https://dashboard.pantheon.io/personal-settings/machine-tokens
 defaults:
   run:
     shell: bash
@@ -29,9 +34,6 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   GITHUB_OWNER: ${{ github.repository_owner }}
   CI_PROJECT_NAME: ${{ github.repository }}
-    
-    
-
 
 concurrency:
   group: $CI_BRANCH
@@ -39,6 +41,7 @@ concurrency:
 
 jobs:
   configure_env_vars:
+    name: Configure environment variables
     container:
       image: quay.io/pantheon-public/build-tools-ci:6.x
       options: --user root
@@ -71,7 +74,10 @@ jobs:
           echo "export CI_NODE_INDEX=0" >> $BASH_ENV
           echo "export CI_REPOSITORY_URL='https://github.com/${GITHUB_REPOSITORY}'" >> $BASH_ENV
           echo "export ARTIFACTS_DIR_URL='${GITHUB_WORKFLOW_URL}/#artifacts'" >> $BASH_ENV
+# important note: deploy_to_pantheon will push EVERYTHING in the repo directory other than the .git directory, i.e.
+# it will not respect .gitignore
   deploy_to_pantheon:
+      name: "Deploy to Pantheon"
       container:
         image: quay.io/pantheon-public/build-tools-ci:6.x
         options: --user root
