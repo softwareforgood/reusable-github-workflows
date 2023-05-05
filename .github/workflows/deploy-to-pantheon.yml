@@ -25,7 +25,7 @@ env:
   # ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
   GITHUB_TOKEN: ${{ github.token }}
   TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
-  TEST_SITE_NAME: ${{ secrets.TERMINUS_SITE }}
+  TEST_SITE_NAME: ${{ vars.TERMINUS_SITE }}
   BASH_ENV: "./bash_env.txt"
   CI_BRANCH: ${{ github.ref }}
   COMMIT_SHA: ${{ github.sha }}
