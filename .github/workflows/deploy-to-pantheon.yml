@@ -9,7 +9,7 @@ on:
     secrets:
       SSH_PRIVATE_KEY:
         required: true
-        description: An SSH private key, as saved at https://dashboard.pantheon.io/personal-settings/ssh-keys
+        description: An SSH private key, corresponding to a public https://dashboard.pantheon.io/personal-settings/ssh-keys
       TERMINUS_TOKEN:
         required: true
         description: A Pantheon machine token, as created at https://dashboard.pantheon.io/personal-settings/machine-tokens
