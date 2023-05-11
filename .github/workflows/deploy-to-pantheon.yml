@@ -105,8 +105,15 @@ jobs:
         - name: setup-environment-vars
           run: /build-tools-ci/scripts/set-environment
         
+        - name: Check if assets exist
+          uses: xSAVIKx/artifact-exists-action@v0 
+          id: check-artifact-existance
+          with:
+            name: assets
+          
         - name: Get dist
           uses: actions/download-artifact@v3
+          if: ${{ steps.check-artifact-existance.outputs.exists }}
           with:
             name: assets
 
