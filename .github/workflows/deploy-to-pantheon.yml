@@ -52,6 +52,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Get default branch
+        id: get-origin-default-branch
+        uses: pipeline-foundation/get-origin-def-branch@v1.0.0
 
       - name: Cache bash_env.txt
         uses: actions/cache@v3
@@ -65,7 +68,6 @@ jobs:
       # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
       - name: setup-environment-vars
         run: |
-          export CI_BRANCH="master"
           export CI_PROJECT_REPONAME=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
             -H "Accept: application/vnd.github.groot-preview+json" \
             "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
@@ -77,6 +79,7 @@ jobs:
           echo "export CI_NODE_INDEX=0" >> $BASH_ENV
           echo "export CI_REPOSITORY_URL='https://github.com/${GITHUB_REPOSITORY}'" >> $BASH_ENV
           echo "export ARTIFACTS_DIR_URL='${GITHUB_WORKFLOW_URL}/#artifacts'" >> $BASH_ENV
+          echo "export DEFAULT_BRANCH='${{ steps.get-origin-default-branch.outputs.default_branch}}'" >> $BASH_ENV
 # important note: deploy_to_pantheon will push EVERYTHING in the repo directory other than the .git directory, i.e.
 # it will not respect .gitignore
   deploy_to_pantheon:
