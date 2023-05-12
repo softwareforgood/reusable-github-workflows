@@ -34,6 +34,7 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   GITHUB_OWNER: ${{ github.repository_owner }}
   CI_PROJECT_NAME: ${{ github.repository }}
+  TERMINUS_SITE: ${{ vars.TERMINUS_SITE }}
 
 concurrency:
   group: $CI_BRANCH
@@ -107,7 +108,7 @@ jobs:
         
         - name: Check if assets exist
           uses: xSAVIKx/artifact-exists-action@v0 
-          id: check-artifact-existance
+          id: check-artifact-existence
           with:
             name: assets
           
