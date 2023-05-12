@@ -25,12 +25,12 @@ env:
   # ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
   GITHUB_TOKEN: ${{ github.token }}
   TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
-  TEST_SITE_NAME: ${{ vars.TERMINUS_SITE }}
+  TEST_SITE_NAME: ${{ inputs.TERMINUS_SITE }}
   BASH_ENV: "./bash_env.txt"
   CI_BRANCH: ${{ github.ref }}
   COMMIT_SHA: ${{ github.sha }}
   CI_BUILD_NUMBER: ${{ github.run_number }}
-  DEFAULT_SITE: ${{ vars.TERMINUS_SITE }}
+  DEFAULT_SITE: ${{ inputs.TERMINUS_SITE }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   GITHUB_OWNER: ${{ github.repository_owner }}
   CI_PROJECT_NAME: ${{ github.repository }}
@@ -107,13 +107,13 @@ jobs:
         
         - name: Check if assets exist
           uses: xSAVIKx/artifact-exists-action@v0 
-          id: check-artifact-existance
+          id: check-artifact-existence
           with:
             name: assets
           
         - name: Get dist
           uses: actions/download-artifact@v3
-          if: ${{ steps.check-artifact-existance.outputs.exists }}
+          if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' }}
           with:
             name: assets
 
