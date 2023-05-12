@@ -113,7 +113,7 @@ jobs:
           
         - name: Get dist
           uses: actions/download-artifact@v3
-          if: ${{ steps.check-artifact-existance.outputs.exists }}
+          if: ${{ steps.check-artifact-existance.outputs.exists  != 'false' }}
           with:
             name: assets
 
