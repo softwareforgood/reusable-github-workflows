@@ -56,7 +56,7 @@ jobs:
           cache-name: cache-bash-env
         with:
           path: bash_env.txt
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}-${{ github.run_attempt }}
 
       # Set TERMINUS_ENV and related environment variables.
       # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
@@ -95,8 +95,9 @@ jobs:
             cache-name: cache-bash-env
           with:
             path: bash_env.txt
-            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}
+            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}-${{ github.run_attempt }}
             restore-keys: |
+              ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_number }}-
               ${{ runner.os }}-build-${{ env.cache-name }}-
               ${{ runner.os }}-build-
               ${{ runner.os }}-
