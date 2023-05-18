@@ -117,10 +117,10 @@ jobs:
           
         - name: Get dist
           uses: actions/download-artifact@v3
-          if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' && inputs.ASSETS_TO_DEPLOY_PATH != ''}}
+          if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' && inputs.ASSETS_ARTIFACT_PATH != ''}}
           with:
             name: assets
-            path: ${{ inputs.ASSETS_TO_DEPLOY_PATH }}
+            path: ${{ inputs.ASSETS_ARTIFACT_PATH }}
 
         # Deploy to Pantheon
         - name: deploy to Pantheon
