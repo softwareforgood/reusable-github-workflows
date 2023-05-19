@@ -6,6 +6,9 @@ on:
         type: string
         required: true
         description: The name of the site as viewable by calling `terminus site:list`
+      ASSETS_ARTIFACT_PATH:
+        type: string
+        description: The path for built asset artifact to be restored into the tree
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -114,9 +117,10 @@ jobs:
           
         - name: Get dist
           uses: actions/download-artifact@v3
-          if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' }}
+          if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' && inputs.ASSETS_ARTIFACT_PATH != ''}}
           with:
             name: assets
+            path: ${{ inputs.ASSETS_ARTIFACT_PATH }}
 
         # Deploy to Pantheon
         - name: deploy to Pantheon
