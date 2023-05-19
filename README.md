@@ -23,6 +23,7 @@ Add a job to your deploy workflow in your project like this:
     uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v0
     with:
       TERMINUS_SITE: pantheon-site-name # The name of the site as viewable by calling `terminus site:list`
+      ASSETS_ARTIFACT_PATH: path/to/assets # (optional) the path to where the artifact with id "assets" should be place in the tree
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # An SSH private key, corresponding to a public key saved at https://dashboard.pantheon.io/personal-settings/ssh-keys
       TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }} # A Pantheon machine token, as created at https://dashboard.pantheon.io/personal-settings/machine-tokens
@@ -115,9 +116,7 @@ jobs:
         with:
           name: assets
           # when these paths are downloaded in deploy-to-pantheon.yml, they'll be returned to the original locations in the tree
-          path: |
-            path/to/some/assets 
-            path/to/other/assets
+          path: path/to/some/assets 
   
   deploy: 
     name: Deploy 
@@ -125,6 +124,7 @@ jobs:
     uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v0
     with:
       TERMINUS_SITE: terminus-site-name
+      ASSETS_ARTIFACT_PATH: path/to/some/assets
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
