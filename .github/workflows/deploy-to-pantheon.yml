@@ -121,7 +121,9 @@ jobs:
         # Set TERMINUS_ENV and related environment variables.
         # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
         - name: setup-environment-vars
-          run: /build-tools-ci/scripts/set-environment
+          run: |
+            source $BASH_ENV
+            /build-tools-ci/scripts/set-environment
         
         - name: Check if assets exist
           uses: xSAVIKx/artifact-exists-action@v0 
