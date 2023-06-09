@@ -30,7 +30,7 @@ env:
   TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
   TEST_SITE_NAME: ${{ inputs.TERMINUS_SITE }}
   BASH_ENV: "./bash_env.txt"
-  CI_BRANCH: ${{ github.ref }}
+  CI_BRANCH: ${{ github.ref_name }}
   COMMIT_SHA: ${{ github.sha }}
   CI_BUILD_NUMBER: ${{ github.run_number }}
   DEFAULT_SITE: ${{ inputs.TERMINUS_SITE }}
@@ -52,6 +52,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: install gh cli
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
+      - name: Get default branch
+        id: get-origin-default-branch
+        run: |
+          export BRANCH=`gh api /repos/${{ github.repository }} --jq ".default_branch"`
+          echo "default_branch=${BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Cache bash_env.txt
         uses: actions/cache@v3
@@ -65,12 +78,12 @@ jobs:
       # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
       - name: setup-environment-vars
         run: |
-          export CI_BRANCH="master"
           export CI_PROJECT_REPONAME=`curl -u "${GITHUB_OWNER}:${GITHUB_TOKEN}" \
             -H "Accept: application/vnd.github.groot-preview+json" \
             "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
             python3 -c "import sys, json; print(json.load(sys.stdin)[0]['base']['repo']['name'])"`
           export CI_PROJECT_USERNAME=$GITHUB_REPOSITORY_OWNER
+          export DEFAULT_BRANCH='${{ steps.get-origin-default-branch.outputs.default_branch}}'
           /build-tools-ci/scripts/set-environment
           GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           echo "export CI_BUILD_URL='${GITHUB_WORKFLOW_URL}'" >> $BASH_ENV
@@ -107,7 +120,9 @@ jobs:
         # Set TERMINUS_ENV and related environment variables.
         # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
         - name: setup-environment-vars
-          run: /build-tools-ci/scripts/set-environment
+          run: |
+            source $BASH_ENV
+            /build-tools-ci/scripts/set-environment
         
         - name: Check if assets exist
           uses: xSAVIKx/artifact-exists-action@v0 
