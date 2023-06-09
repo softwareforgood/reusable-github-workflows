@@ -90,7 +90,7 @@ jobs:
           echo "export CI_REPOSITORY_URL='https://github.com/${GITHUB_REPOSITORY}'" >> $BASH_ENV
           echo "export ARTIFACTS_DIR_URL='${GITHUB_WORKFLOW_URL}/#artifacts'" >> $BASH_ENV
           echo "export DEFAULT_BRANCH='${{ steps.get-origin-default-branch.outputs.default_branch}}'" >> $BASH_ENV
-          echo "export DEFAULT_BRANCH_REF='refs/heads/${{ steps.get-origin-default-branch.outputs.default_branch}}'" >> $BASH_ENV"
+          echo "export DEFAULT_BRANCH_REF='refs/heads/${{ steps.get-origin-default-branch.outputs.default_branch}}'" >> $BASH_ENV
 # important note: deploy_to_pantheon will push EVERYTHING in the repo directory other than the .git directory, i.e.
 # it will not respect .gitignore
   deploy_to_pantheon:
