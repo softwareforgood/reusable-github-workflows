@@ -30,7 +30,7 @@ env:
   TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
   TEST_SITE_NAME: ${{ inputs.TERMINUS_SITE }}
   BASH_ENV: "./bash_env.txt"
-  CI_BRANCH: ${{ github.ref }}
+  CI_BRANCH: ${{ github.ref_name }}
   COMMIT_SHA: ${{ github.sha }}
   CI_BUILD_NUMBER: ${{ github.run_number }}
   DEFAULT_SITE: ${{ inputs.TERMINUS_SITE }}
@@ -83,14 +83,13 @@ jobs:
             "https://api.github.com/repos/${CI_PROJECT_NAME}/commits/${COMMIT_SHA}/pulls" | \
             python3 -c "import sys, json; print(json.load(sys.stdin)[0]['base']['repo']['name'])"`
           export CI_PROJECT_USERNAME=$GITHUB_REPOSITORY_OWNER
+          export DEFAULT_BRANCH='${{ steps.get-origin-default-branch.outputs.default_branch}}'
           /build-tools-ci/scripts/set-environment
           GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           echo "export CI_BUILD_URL='${GITHUB_WORKFLOW_URL}'" >> $BASH_ENV
           echo "export CI_NODE_INDEX=0" >> $BASH_ENV
           echo "export CI_REPOSITORY_URL='https://github.com/${GITHUB_REPOSITORY}'" >> $BASH_ENV
           echo "export ARTIFACTS_DIR_URL='${GITHUB_WORKFLOW_URL}/#artifacts'" >> $BASH_ENV
-          echo "export DEFAULT_BRANCH='${{ steps.get-origin-default-branch.outputs.default_branch}}'" >> $BASH_ENV
-          echo "export DEFAULT_BRANCH_REF='refs/heads/${{ steps.get-origin-default-branch.outputs.default_branch}}'" >> $BASH_ENV
 # important note: deploy_to_pantheon will push EVERYTHING in the repo directory other than the .git directory, i.e.
 # it will not respect .gitignore
   deploy_to_pantheon:
