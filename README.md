@@ -69,7 +69,7 @@ name: Deploy # this can be any name you'd like
 on:
   push:
     branches:
-      - master
+      - main # or whatever your default branch name is
   workflow_dispatch: # this is helpful because it allows you to run the workflow from the Github UI for debugging your workflow
 
 concurrency:
@@ -96,7 +96,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 concurrency:
