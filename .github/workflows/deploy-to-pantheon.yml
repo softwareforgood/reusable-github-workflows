@@ -126,7 +126,7 @@ jobs:
             /build-tools-ci/scripts/set-environment
         
         - name: Check if assets exist
-          uses: xSAVIKx/artifact-exists-action@v0 
+          uses: xSAVIKx/artifact-exists-action@a9dc5938acb0f91260b31a952a914001defb642c # this is v0.2 
           id: check-artifact-existence
           with:
             name: assets
