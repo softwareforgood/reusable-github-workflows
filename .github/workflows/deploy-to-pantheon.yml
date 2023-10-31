@@ -31,7 +31,7 @@ env:
   TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
   TEST_SITE_NAME: ${{ inputs.TERMINUS_SITE }}
   BASH_ENV: "./bash_env.txt"
-  CI_BRANCH: ${{ github.ref_name }}
+  CI_BRANCH: ${{ github.head_ref || github.ref_name }}
   COMMIT_SHA: ${{ github.sha }}
   CI_BUILD_NUMBER: ${{ github.run_number }}
   DEFAULT_SITE: ${{ inputs.TERMINUS_SITE }}
@@ -40,7 +40,7 @@ env:
   CI_PROJECT_NAME: ${{ github.repository }}
 
 concurrency:
-  group: $CI_BRANCH
+  group: deploy-to-pantheon--${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -155,7 +155,7 @@ jobs:
                 terminus -n build:env:create "$TERMINUS_SITE.dev" "$TERMINUS_ENV" --yes
             else
                 # Push to the dev environment
-                terminus -n build:env:push "$TERMINUS_SITE.dev" --yes
+                terminus -n build:env:push "$TERMINUS_SITE.dev" --yes --message "Build"
             fi
 
             # Run update-db to ensure that the cloned database is updated for the new code.
