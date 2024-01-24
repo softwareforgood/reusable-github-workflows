@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: install gh cli
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
@@ -103,7 +103,7 @@ jobs:
       needs: [configure_env_vars]
       steps:
         - name: Checkout
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4
           with:
             fetch-depth: 0
 
