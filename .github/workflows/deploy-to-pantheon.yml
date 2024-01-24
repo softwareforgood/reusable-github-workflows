@@ -69,7 +69,7 @@ jobs:
           echo "default_branch=${BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Cache bash_env.txt
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-bash-env
         with:
@@ -108,7 +108,7 @@ jobs:
             fetch-depth: 0
 
         - name: Cache bash_env.txt
-          uses: actions/cache@v3
+          uses: actions/cache@v4
           env:
             cache-name: cache-bash-env
           with:
