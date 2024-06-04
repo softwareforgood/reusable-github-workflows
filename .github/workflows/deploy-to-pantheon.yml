@@ -127,13 +127,13 @@ jobs:
             /build-tools-ci/scripts/set-environment
         
         - name: Check if assets exist
-          uses: xSAVIKx/artifact-exists-action@c9e10010eaf570757e4715c5875a716a72e9c706 # this is v0.6
+          uses: softwareforgood/check-artifact-v4-existence@v0
           id: check-artifact-existence
           with:
             name: assets
           
         - name: Get dist
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' && inputs.ASSETS_ARTIFACT_PATH != ''}}
           with:
             name: assets
