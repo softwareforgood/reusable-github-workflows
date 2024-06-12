@@ -45,6 +45,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  warn_on_version:
+    name: "Warn that support for v0 ending"
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::warning title=\"Update now\"::Support for the download/upload-artifact@v3 action is ending in November 2024. You must update to the v1 version of this workflow."
+
   configure_env_vars:
     name: Configure environment variables
     container:
