@@ -49,7 +49,7 @@ jobs:
     name: "Warn that support for v0 ending"
     runs-on: ubuntu-latest
     steps:
-      - run: echo "::warning title=\"Update now\"::Support for the download/upload-artifact@v3 action is ending in November 2024. You must update to the v1 version of this workflow."
+      - run: echo "::error title=Update now::Support for the download/upload-artifact@v3 actions are ending in November 2024. This means v0 of this workflow will stop working. You must update to the v1 version of this workflow to continue using it."
 
   configure_env_vars:
     name: Configure environment variables
