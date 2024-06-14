@@ -77,7 +77,7 @@ concurrency:
 jobs:
   deploy: # this can be any identifier you like
     name: Deploy # This can be anything you'd like
-    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v0
+    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v1
     with:
       TERMINUS_SITE: terminus-site-name # put your terminus site name here
     secrets:
@@ -107,12 +107,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
     
       # additional build steps
 
       - name: Upload compiled assets
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           # when these paths are downloaded in deploy-to-pantheon.yml, they'll be returned to the original locations in the tree
@@ -121,7 +121,7 @@ jobs:
   deploy: 
     name: Deploy 
     needs: [build] # this is VERY important; your build needs to have completed before deploying
-    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v0
+    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v1
     with:
       TERMINUS_SITE: terminus-site-name
       ASSETS_ARTIFACT_PATH: path/to/some/assets
