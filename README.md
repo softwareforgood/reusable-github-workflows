@@ -20,7 +20,7 @@ Add a job to your deploy workflow in your project like this:
 ```yaml
   deploy: # this name can be anything you'd like
     name: Deploy # this name can be anything you'd like
-    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v0
+    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v2
     with:
       TERMINUS_SITE: pantheon-site-name # The name of the site as viewable by calling `terminus site:list`
       ASSETS_ARTIFACT_PATH: path/to/assets # (optional) the path to where the artifact with id "assets" should be place in the tree
