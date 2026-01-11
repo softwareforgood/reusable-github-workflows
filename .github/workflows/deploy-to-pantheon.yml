@@ -43,7 +43,7 @@ jobs:
             name: assets
           
         - name: Get dist
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v7
           if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' && inputs.ASSETS_ARTIFACT_PATH != ''}}
           with:
             name: assets
