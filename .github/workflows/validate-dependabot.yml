@@ -1,0 +1,20 @@
+name: Validate dependabot.yml
+
+on:
+  pull_request:
+    paths:
+      - .github/dependabot.yml
+      - .github/workflows/validate-dependabot.yml
+  push:
+    branches: [main] # <-- or whatever your default branch is
+  workflow_dispatch:
+
+jobs:
+  validate-dependabot:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: softwareforgood/validate-dependabot.yml@v0
