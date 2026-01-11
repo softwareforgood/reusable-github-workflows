@@ -42,7 +42,7 @@ Next, need you'll need an SSH private key which is authorized for your account. 
 at https://dashboard.pantheon.io/personal-settings/ssh-keys.
 
 > I recommend using a SSH private key which is only used for deploys. That allows you to easily remove it later
-> if you want to stop all deploys for that site.'
+> if you want to stop all deploys for that site.
 
 Last, you'll need a Pantheon machine token. as created at https://dashboard.pantheon.io/personal-settings/machine-tokens.
 
@@ -116,7 +116,7 @@ jobs:
         with:
           name: assets
           # when these paths are downloaded in deploy-to-pantheon.yml, they'll be returned to the original locations in the tree
-          path: path/to/some/assets 
+          path: path/to/some/assets
   
   deploy: 
     name: Deploy 
