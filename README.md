@@ -77,7 +77,7 @@ concurrency:
 jobs:
   deploy: # this can be any identifier you like
     name: Deploy # This can be anything you'd like
-    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v1
+    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v2
     with:
       TERMINUS_SITE: terminus-site-name # put your terminus site name here
     secrets:
@@ -121,7 +121,7 @@ jobs:
   deploy: 
     name: Deploy 
     needs: [build] # this is VERY important; your build needs to have completed before deploying
-    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v1
+    uses: softwareforgood/reusable-github-workflows/.github/workflows/deploy-to-pantheon.yml@v2
     with:
       TERMINUS_SITE: terminus-site-name
       ASSETS_ARTIFACT_PATH: path/to/some/assets
