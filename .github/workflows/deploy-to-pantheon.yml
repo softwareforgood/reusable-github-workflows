@@ -17,6 +17,10 @@ on:
       TERMINUS_TOKEN:
         required: true
         description: A Pantheon machine token, as created at https://dashboard.pantheon.io/personal-settings/machine-tokens
+    outputs:
+      TARGET_ENV_URL:
+        description: The URL of the target environment
+        value: ${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV_URL }}
 concurrency:
   group: deploy-to-pantheon--${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
@@ -31,6 +35,9 @@ jobs:
         deployments: write
         contents: write # we need to write commit metadata which requires contents:write
         pull-requests: read
+      outputs:
+        TARGET_ENV: ${{ steps.deploy_step.outputs.target_env }}
+        TARGET_ENV_URL: ${{ steps.deploy_step.outputs.target_env_url }}
 
       steps:
         - name: Checkout
@@ -56,5 +63,6 @@ jobs:
             ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
             machine_token: ${{ secrets.TERMINUS_TOKEN }}
             site: ${{ inputs.TERMINUS_SITE }}
+          id: deploy_step
        
         
