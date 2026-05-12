@@ -10,6 +10,10 @@ on:
       ASSETS_ARTIFACT_PATH:
         type: string
         description: The path for built asset artifact to be restored into the tree
+      delete_old_environments:
+        type: boolean
+        description: Delete old multi-dev environments. Defaults to true.
+        default: true
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -63,6 +67,7 @@ jobs:
             ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
             machine_token: ${{ secrets.TERMINUS_TOKEN }}
             site: ${{ inputs.TERMINUS_SITE }}
+            delete_old_environments: ${{ inputs.delete_old_environments }}
           id: deploy_step
        
         
