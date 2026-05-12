@@ -12,7 +12,7 @@ on:
         description: The path for built asset artifact to be restored into the tree
       delete_old_environments:
         type: boolean
-        description: Delete old multi-dev environments
+        description: Delete old multi-dev environments. Defaults to true.
         default: true
     secrets:
       SSH_PRIVATE_KEY:
