@@ -34,7 +34,7 @@ jobs:
       permissions:
         deployments: write
         contents: write # we need to write commit metadata which requires contents:write
-        pull-requests: read
+        pull-requests: write
       outputs:
         TARGET_ENV: ${{ steps.deploy_step.outputs.target_env }}
         TARGET_ENV_URL: ${{ steps.deploy_step.outputs.target_env_url }}
