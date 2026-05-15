@@ -62,7 +62,7 @@ jobs:
 
         # Deploy to Pantheon
         - name: deploy to Pantheon
-          uses: pantheon-systems/push-to-pantheon@0.9.2
+          uses: softwareforgood/push-to-pantheon@0.x
           with:
             ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
             machine_token: ${{ secrets.TERMINUS_TOKEN }}
