@@ -24,8 +24,8 @@ on:
       TARGET_ENV:
         description: The name of the target env
         value: ${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV }}
-      TERMINUS_SITE_AND_ENV:
-        description: the Site and Env for use in terminus
+      TARGET_TERMINUS_SITE_AND_ENV:
+        description: The site and env for accessing this site via terminus. the format is TERMINUS_SITE.TARGET_ENV
         value: ${{inputs.TERMINUS_SITE}}.${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV }}
 
 concurrency:
