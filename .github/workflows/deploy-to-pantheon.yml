@@ -25,7 +25,7 @@ on:
         description: The name of the target env
         value: ${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV }}
       TARGET_TERMINUS_SITE_AND_ENV:
-        description: The site and env for accessing this site via terminus. the format is TERMINUS_SITE.TARGET_ENV
+        description: The site and env for accessing this Wordpress site via terminus, i.e. `terminus wp -- TARGET_TERMINUS_SITE_AND_ENV <some wp command>` 
         value: ${{inputs.TERMINUS_SITE}}.${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV }}
 
 concurrency:
