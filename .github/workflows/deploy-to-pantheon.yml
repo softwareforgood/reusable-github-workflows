@@ -21,6 +21,13 @@ on:
       TARGET_ENV_URL:
         description: The URL of the target environment
         value: ${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV_URL }}
+      TARGET_ENV:
+        description: The name of the target env
+        value: ${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV }}
+      TERMINUS_SITE_AND_ENV:
+        description: the Site and Env for use in terminus
+        value: ${{inputs.TERMINUS_SITE}}.${{ jobs.deploy_to_pantheon.outputs.TARGET_ENV }}
+
 concurrency:
   group: deploy-to-pantheon--${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
