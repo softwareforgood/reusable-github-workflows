@@ -10,6 +10,10 @@ on:
       ASSETS_ARTIFACT_PATH:
         type: string
         description: The path for built asset artifact to be restored into the tree
+      delete_old_environments:
+        type: boolean
+        description: Delete old multi-dev environments. Defaults to true.
+        default: true
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -44,7 +48,7 @@ jobs:
       permissions:
         deployments: write
         contents: write # we need to write commit metadata which requires contents:write
-        pull-requests: read
+        pull-requests: write
       outputs:
         TARGET_ENV: ${{ steps.deploy_step.outputs.target_env }}
         TARGET_ENV_URL: ${{ steps.deploy_step.outputs.target_env_url }}
@@ -73,6 +77,7 @@ jobs:
             ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
             machine_token: ${{ secrets.TERMINUS_TOKEN }}
             site: ${{ inputs.TERMINUS_SITE }}
+            delete_old_environments: ${{ inputs.delete_old_environments }}
           id: deploy_step
        
         
