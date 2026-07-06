@@ -14,6 +14,12 @@ on:
         type: boolean
         description: Delete old multi-dev environments. Defaults to true.
         default: true
+      configure_turnstile_test_keys:
+        type: boolean
+        required: false
+        default: false
+        description: Set to true to configure Cloudflare Turnstile test keys after deployment.
+
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -79,5 +85,9 @@ jobs:
             site: ${{ inputs.TERMINUS_SITE }}
             delete_old_environments: ${{ inputs.delete_old_environments }}
           id: deploy_step
-       
-        
+          
+        - name: Configure Turnstile test keys
+          if: ${{ inputs.configure_turnstile_test_keys }}
+          run: |
+            terminus wp ${{ inputs.TERMINUS_SITE }}.${{ steps.deploy_step.outputs.target_env }} -- option update gravityformsaddon_gravityformsturnstile_settings \
+            '{"site_key":"1x00000000000000000000AA","site_secret":"1x0000000000000000000000000000000AA","theme":"auto","preview":""}'
