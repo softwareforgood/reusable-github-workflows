@@ -24,6 +24,8 @@ Add a job to your deploy workflow in your project like this:
     with:
       TERMINUS_SITE: pantheon-site-name # The name of the site as viewable by calling `terminus site:list`
       ASSETS_ARTIFACT_PATH: path/to/assets # (optional) the path to where the artifact with id "assets" should be place in the tree
+      source_env: dev # (optional) the env multidevs copy their database and files from. Defaults to live
+      clone_content: true # (optional) re-copy the database and files on every deploy, wiping multidev edits. Defaults to false
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # An SSH private key, corresponding to a public key saved at https://dashboard.pantheon.io/personal-settings/ssh-keys
       TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }} # A Pantheon machine token, as created at https://dashboard.pantheon.io/personal-settings/machine-tokens
