@@ -55,16 +55,16 @@ jobs:
 
       steps:
         - name: Checkout
-          uses: actions/checkout@v7
+          uses: actions/checkout@v7.0.1
         
         - name: Check if assets exist
-          uses: softwareforgood/check-artifact-v4-existence@v0
+          uses: softwareforgood/check-artifact-v4-existence@v0.4.5
           id: check-artifact-existence
           with:
             name: assets
           
         - name: Get dist
-          uses: actions/download-artifact@v8
+          uses: actions/download-artifact@v8.0.2
           if: ${{ steps.check-artifact-existence.outputs.exists  != 'false' && inputs.ASSETS_ARTIFACT_PATH != ''}}
           with:
             name: assets
